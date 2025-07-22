@@ -5,7 +5,7 @@
 \title{Convert gene ids according to the gene type}
 \usage{
 convertGeneID(
-  genetype = c("Entrez", "mirna", "Ensembl_gene", "Ensembl_trans", "NCBI"),
+  genetype = c("Entrez", "mirna", "Ensembl_gene", "Ensembl_trans", "NCBI", "All"),
   genelist,
   org_assembly = c("hg19", "hg38", "mm10", "dre10", "rn6", "dm6", "ce11", "sc3")
 )

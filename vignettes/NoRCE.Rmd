@@ -3,8 +3,6 @@ title: "NoRCE: Noncoding RNA Set Cis Annotation and Enrichment"
 shorttitle: "NoRCE"
 output:
  html_document:
-    toc: true
-    toc_depth: 4
     theme: readable
     highlight: pygments
 vignette: >
@@ -26,13 +24,13 @@ knitr::opts_chunk$set(tidy = FALSE,
 # NORCE
 
 ## General Information
-NoRCE provides a comprehensive, systematical, user-friendly pipeline for preprocessing, annotation, and enrichment of all types of ncRNA genes such as lncRNA, mature and precursor miRNA, snoRNA, siRNA, circular RNA. NoRCE analyses are based on spatially proximal mRNAs at a certain distance for a set of non-coding RNA genes or regions of interest. Moreover, specific analyses such as biotype filtering, miRNA-mRNA co-expression analysis, miRNA target predictions can be performed for filtering. Besides, it allows curating the gene set according to the topologically associating domain (TAD) boundaries. NoRCE accepts gene lists and gene regions as an input. 
+NoRCE provides a comprehensive, systematical, user-friendly pipeline for preprocessing, annotation, and enrichment of all types of ncRNA genes, such as lncRNA, mature and precursor miRNA, snoRNA, siRNA, and circular RNA. NoRCE analyses are based on spatially proximal mRNAs at a certain distance for a set of non-coding RNA genes or regions of interest. Moreover, specific analyses such as biotype filtering, miRNA-mRNA co-expression analysis, and miRNA target predictions can be performed for filtering. Besides, it allows curating the gene set according to the topologically associating domain (TAD) boundaries. NoRCE accepts gene lists and gene regions as input. 
 
 ![NoRCE Workflow](NoRce_workflow.png)
 
 
 ### Supported Assemblies and Organisms
-NoRCE supports many organisms and assemblies. To work with supported organisms, the user has to provide the organism assembly, `org_assembly`, with a keyword that is listed in the table. 
+NoRCE supports many organisms and assemblies. To work with supported organisms, the user must provide the organism assembly, `org_assembly`, with a keyword listed in the below table. 
  
 
 | Organisms     | Assemblies    | Keyword |
@@ -67,7 +65,7 @@ library(NoRCE)
 Moreover, NoRCE can be downloaded from the [GitHub repository](https://github.com/guldenolgun/NoRCE). 
 
 ## Changing Parameter Setting
-NoRCE gives freedom to the user. However, to prevent getting lost in parameters, most of them are set to their default value. To change those parameters, which are listed in the [Default Parameters](#default-parameters) section, `setParameters` function should be called, and parameters and their user-defined values should be defined. The table in the [Default Parameters](#default-parameters) section illustrates the possible parameters and their values.
+NoRCE gives freedom to the user. However, most of the parameters are set to their default value. To change those parameters listed in the [Default Parameters](#default-parameters) section, the `setParameters` function should be called, and parameters and their user-defined values should be defined. The table in the [Default Parameters](#default-parameters) section illustrates the possible parameters and their values.
 
 
 ```{r change parameters, eval=FALSE, echo=TRUE, include=TRUE}
@@ -86,11 +84,11 @@ GO enrichment analysis can be performed based on gene neighborhood, predicted ta
 
 Each analysis is controlled by corresponding parameters. When related parameters are set, the gene sets resulting from the intersection of those analyses will be considered for enrichment analysis. However, co-expression analysis can be augmented with other analyses.
 
-GO enrichment pipeline analysis is carried out with `geneGOEnricher` and `geneRegionGOEnricher` functions for an input gene set and regions, respectively. Also, the miRNA gene enrichment pipeline is carried out with `mirnaGOEnricher` and `mirnaRegionGOEnricher` functions. However, the user can use other functions for performing subparts of the analysis. Species assembly must be defined using the `org_assembly` parameter, which is provided in the Keyword column in the table above. NoRCE allows the user to use a background gene set. 
+GO enrichment pipeline analysis is carried out with `geneGOEnricher` and `geneRegionGOEnricher` functions for an input gene set and regions, respectively. Also, the miRNA gene enrichment pipeline is carried out with `mirnaGOEnricher` and `mirnaRegionGOEnricher` functions. However, the user can use other functions to perform the analysis's subparts. Species assembly must be defined using the `org_assembly` parameter provided in the Keyword column in the table above. NoRCE allows the user to use a background gene set. 
 
 ### Enrichment Analysis Based on Gene Neighbourhood
 
-When the `near` parameter is set to `TRUE`, the closest genes for the input gene list are retrieved. The gene neighborhood taken into consideration is controlled by the `upstream` and `downstream` parameters. By default, those parameters are set to 10 kb and all genes that fall into 10 kb upstream and downstream of the input genes are retrieved. Also, using `searchRegion` parameter, the analysis can be performed for only those genes whose exon or intron regions fall into the specified upstream and downstream range of the input genes.
+When the `near` parameter is set to `TRUE`, the closest genes for the input gene list are retrieved. The gene neighborhood taken into consideration is controlled by the `upstream` and `downstream` parameters. By default, those parameters are set to 10 kb, and all genes that fall into 10 kb upstream and downstream of the input genes are retrieved. Also, using the `searchRegion` parameter, the analysis can be performed for only those genes whose exon or intron regions fall into the specified upstream and downstream range of the input genes.
 
 To perform enrichment analysis based on considering only gene neighborhood:
 
@@ -132,7 +130,7 @@ regionGO<-geneRegionGOEnricher(region = regionNC, org_assembly= 'hg19', near = T
 ### Enrichment Analysis Based on Target Prediction
 For a set of miRNA genes, the user can filter the gene set using miRNA target predictions. This analysis is controlled by the `target` parameter. Once the `target` parameter is set to `TRUE`, TargetScan predictions are used to curate the gene list that will be enriched. 
 
-To performed GO enrichment based on neighboring coding genes of brain miRNA targeted by the same brain miRNA gene set.  
+To perform GO enrichment based on neighboring coding genes of brain miRNA targeted by the same brain miRNA gene set.  
 
 ```{r, Intersection of the nearest genes of the input gene set and the potential target set is carries out for enrichment analysis, eval=FALSE}
 mirGO<-mirnaGOEnricher(gene = brain_mirna, org_assembly='hg19', near=TRUE, target=TRUE)
@@ -140,7 +138,7 @@ mirGO<-mirnaGOEnricher(gene = brain_mirna, org_assembly='hg19', near=TRUE, targe
 ```
 
 ### Enrichment Analysis Based on Topological Associating Domain Analysis
-Gene annotation based on topologically associating domain regions is conducted whether ncRNAs fall into the TAD boundaries and coding gene assignment only those that are in the same TAD boundaries are included in the neighborhood coding gene set. If cell-line(s) for TAD boundaries are specified, only regions that are associated with the given cell-line(s) are considered. User-defined and pre-defined TAD boundaries can be used to find potential gene setlist for enrichment. For human, mouse, and fruit fly, pre-defined TAD boundaries are supplied and custom TAD boundaries must be in a BED format. Cell-lines are controlled by the `cellline` parameter. Cell-lines can be listed with the `listTAD` function. 
+Gene annotation based on topologically associating domain regions is conducted whether ncRNAs fall into the TAD boundaries and coding gene assignment; only those that are in the same TAD boundaries are included in the neighborhood coding gene set. If cell line (s) for TAD boundaries are specified, only regions that are associated with the given cell line (s) are considered. User-defined and pre-defined TAD boundaries can be used to find potential gene set list for enrichment. For human, mouse, and fruit fly, pre-defined TAD boundaries are supplied, and custom TAD boundaries must be in a BED format. The `cellline` parameter controls cell lines. Cell lines can be listed with the `listTAD` function. 
 
 To perform enrichment based on TAD boundaries that also fall into the noncoding gene's neighborhood
 
@@ -149,7 +147,7 @@ mirGO<-mirnaGOEnricher(gene = brain_mirna, org_assembly='hg19', near=TRUE, isTAD
 
 ```
 
-User-defined TAD regions can be used as an input for the TAD regions and gene enrichment can be performed based on these custom TAD regions. `TAD` parameter is provided to input the bed formatted TAD regions.
+User-defined TAD regions can be used as input for the TAD regions, and gene enrichment can be performed based on these custom TAD regions. The `TAD` parameter is provided to input the bed formatted TAD regions.
 
 ```{r, eval=FALSE}
 # Read the custom TAD boundaries
@@ -171,7 +169,7 @@ a<-listTAD(TADName = tad_hg19)
 
 
 ### Enrichment Analysis Based on Correlation Analysis
-Enrichment based on correlation analysis is conducted with the binary `express` parameter. For a given cancer, a pre-calculated Pearson correlation coefficient between miRNA-mRNA and miRNA-lncRNA expressions can be used to augment or filter the results. Users can define the correlation coefficient cutoff and cancer of interest with `minAbsCor` and `cancer` parameter, respectively. [miRCancer.db](https://figshare.com/articles/miRCancer\_db\_gz/5576329), the pre-computed miRNA-mRNA and miRNA-lncRNA correlation database, must be downloaded to the local and the path of the database must be given as an input to a `databaseFile` parameter. 
+Enrichment based on correlation analysis is conducted with the binary `express` parameter. For a given cancer, a pre-calculated Pearson correlation coefficient between miRNA-mRNA and miRNA-lncRNA expressions can be used to augment or filter the results. Users can define the correlation coefficient cutoff and cancer of interest with the `minAbsCor` and `cancer` parameters, respectively. [miRCancer.db](https://figshare.com/articles/miRCancer\_db\_gz/5576329), the pre-computed miRNA-mRNA and miRNA-lncRNA correlation database must be downloaded to the local, and the path of the database must be given as an input to a `databaseFile` parameter. 
 
 
 ```{r, corr tcga, eval=FALSE}
@@ -179,9 +177,9 @@ ncGO_tad <- geneGOEnricher(gene = brain_disorder_ncRNA, org_assembly = 'hg19', g
 
 ```
 
-Two custom-defined expression data can be utilized to augment or filter the coding genes that are found using the previous analysis. To make this option on, `isCustomExp` parameter has to set `TRUE`, and custom expressions should be inputted to the `exp1` and `exp2` parameters. Expression data must be patient by gene data and headers should be gene names. If no header is defined, `label1` and `label2` must be used to define the headers. The correlation cutoff can be defined with the `minAbsCor` parameter. 
+Two custom-defined expression data can be utilized to augment or filter the coding genes that are found using the previous analysis. To make this option on, the `isCustomExp` parameter has to be set to `TRUE`, and custom expressions should be inputted into the `exp1` and `exp2` parameters. Expression data must be patient by gene data, and headers should be gene names. If no header is defined, `label1` and `label2` must be used to define the headers. The correlation cutoff can be specified with the `minAbsCor` parameter. 
 
-To perform GO enrichment for the intersection of the miRNA targets and custom RNAseq expression of miRNA and mRNA data in NoRCE repository:
+To perform GO enrichment for the intersection of the miRNA targets and custom RNAseq expression of miRNA and mRNA data in the NoRCE repository:
 
 ```{r, corr analiz, eval=FALSE}
 
@@ -200,7 +198,7 @@ miGO1 <- mirnaGOEnricher(gene = brain_mirna, org_assembly = 'hg19', target = TRU
 
 ## Pathway Enrichment
 ### Enrichment on KEGG, Reactome, WikiPathways
-As in GO enrichment analysis, pathway enrichment analysis can be performed based on gene neighborhood, predicted targets, correlation coefficient, and/or topological domain analysis. Each parameter is controlled by the related parameters and _HUGO_, _ENSEMBL gene_, _ENSEMBL transcript_, _ENTREZ ID_, and _miRBase_ name is supported for the input gene list. Non-coding genes can be annotated and enriched with KEGG, Reactome, and Wiki pathways. `genePathwayEnricher` and `geneRegionPathwayEnricher` functions fulfill the pathway enrichment for the genes and regions expect the miRNA genes and for the miRNA `mirnaPathwayEnricher` and `mirnaRegionPathwayEnricher` is used. By default, KEGG enrichment is performed.
+As in GO enrichment analysis, pathway enrichment analysis can be performed based on gene neighborhood, predicted targets, correlation coefficient, and/or topological domain analysis. Each parameter is controlled by the related parameters, and _HUGO_, _ENSEMBL gene_, _ENSEMBL transcript_, _ENTREZ ID_, and _miRBase_ name is supported for the input gene list. Non-coding genes can be annotated and enriched with KEGG, Reactome, and Wiki pathways. `genePathwayEnricher` and `geneRegionPathwayEnricher` functions fulfill the pathway enrichment for the genes and regions expect the miRNA genes and for the miRNA `mirnaPathwayEnricher` and `mirnaRegionPathwayEnricher` is used. By default, KEGG enrichment is performed.
 
 ```{r, pathway biotype , eval=FALSE}
 # KEGG enrichment is performed 
@@ -238,7 +236,7 @@ ncGO_bader <- genePathwayEnricher(gene = brain_disorder_ncRNA, org_assembly = 'h
 ```
 
 ## Biotype Specific Analysis
-Users can work with only biotypes of interest or can extract some biotypes from the gene list of interest. To get the biotype specific gene list, which is annotated with given biotype(s), `filterBiotype` function should be called. The path of the GTF file or the path of the zipped GTF file must be provided. 
+Users can work with only biotypes of interest or extract some biotypes from the gene list of interest. The `filterBiotype` function should be called to get the biotype-specific gene list. The path of the GTF file or the path of the zipped GTF file must be provided. 
 
 ```{r, extract biotype , eval=FALSE}
 biotypes <- c('unprocessed_pseudogene','transcribed_unprocessed_pseudogene')
@@ -265,7 +263,7 @@ NoRCE allows us to visualize the enrichment results for pathway and GO enrichmen
 
 ### Tabular Format
 
-Users can write the results in a tabular format in a TXT file. To save the result in a tabular format, `writeEnrichment` function should be called. Users can write sorted all or their defined number of enrichment results using the `n` parameter. If the `n` parameter is not defined, all results will be written. Results are sorted based on p-value or p-adjusted value. Users should use the `type` parameter to identify their sort preferences. By default, results are sorted based on the p-adjusted value. By default, it is tab-separated but the users can use their preferred separator.
+Users can write the results in a tabular format in a TXT file. The `writeEnrichment` function should be called to save the result in a tabular format. Users can write sorted all or their defined number of enrichment results using the `n` parameter. If the `n` parameter is not specified, all results will be included in the tabular format. Results are sorted based on p-value or p-adjusted value. Users should use the `type` parameter to identify their sort preferences. By default, results are sorted based on the p-adjusted value. By default, it is tab-separated, but the users can use their preferred separator.
 
 The tabular format contains those fields: GO/pathway ID, pathway/GO term, p-value, p-adjust, gene ratio, background gene ratio, number of enriched genes, annotated gene list with the enriched terms, input noncoding gene list that is annotated with enriched protein-coding genes.  
 
@@ -278,7 +276,7 @@ writeEnrichment(mrnaObject = ncGO,fileName = "result.txt",sept = "\t",type = "pv
 ```
 
 ### Dot Plot 
-Results can be visualized in the dot plot. Top enrichment results according to p-value or p-adjust value are provided, also, the number of annotated genes with the enriched term is supplied. Users have an option to select p-value or p-adjust value for visualization with the `type` parameter also the `n` parameter should be used for top enrichment results. Dot plots can be used for pathway and GO enrichment.
+Results can be visualized in the dot plot. Top enrichment results according to p-value or p-adjust value are provided. Also, the number of annotated genes with the enriched term is supplied. Users have the option to select a p-value or p-adjust value for visualization with the `type` parameter; also, the `n` parameter should be used for top enrichment results. Dot plots can be used for pathway and GO enrichment.
 
 
 ```{r, dot, eval=FALSE}
@@ -288,7 +286,7 @@ drawDotPlot(mrnaObject = ncGO, type = "pvalue", n = 25)
 ![](dot.png)
 
 ### Network
-NoRCE generates gene - enriched terms network to present the relationship between terms and enriched results. Same with dot plots, `type` parameter and `n` parameter can be utilized. By default, nodes are the enriched terms and annotated genes, edges represent the relationship. However, the users can choose to generate a network where nodes input noncoding gene lists that are annotated with enriched protein-coding genes instead of protein-coding genes. This is control by the boolean `isNonCode` parameter. If it is set to `TRUE`, input noncoding genes are utilized. Also, by default, GO-term/pathway-term are used for network generation, but, GO IDs or pathway IDs can be used. This is control by the boolean ` takeID` parameter. If it is set to `TRUE`, the naming decision of the GO/pathway node is GO ID-pathway ID. This network can be used for the pathway and GO enrichment findings. 
+NoRCE generates gene - enriched terms network to present the relationship between terms and enriched results. Same with dot plots, `type` parameter and `n` parameter can be utilized. By default, nodes are the enriched terms and annotated genes; edges represent the relationship. However, the users can choose to generate a network where nodes input noncoding gene lists that are annotated with enriched protein-coding genes instead of protein-coding genes. This is controlled by the boolean `isNonCode` parameter. If `isNonCode` parameter is set to `TRUE`, input noncoding genes are utilized. Also, by default, they are used for network generation, but users can construct a network with GO IDs or pathway IDs instead of GO-term/pathway-terms. This option is controlled by the boolean ` takeID` parameter. If it is set to `TRUE`, the naming decision of the GO/pathway node is GO ID-pathway ID. This network can be used for the pathway and GO enrichment findings. 
 
 ```{r, network, eval=FALSE}
 createNetwork(mrnaObject = ncGO, type = 'pvalue', n = 2, isNonCode = TRUE)
@@ -327,7 +325,7 @@ target <- predictmiTargets(gene = brain_mirna[1:100,],
 ```
 
 ### Custom Co-expression Analysis
-NoRCE can also perform co-expression analysis between two datasets. `exp1` and `exp2` parameters take expression data and each column must contain gene expression. If the expression data does not contain the header information, `label1` and `label2` parameter must be used for this information. `calculateCorr` function calculates the variance of each gene's expression, and genes that vary lesser than the user-defined variance cutoff, `varCutoff`, are excluded from the analysis. The users can select their preferred correlation method, `corrMethod`, with an alternative hypothesis, `alternate` for a given p-value, confidence and minimum correlation cut off, `pcut`, `conf`,`corCutoff`, respectively.  
+NoRCE can also perform co-expression analysis between two datasets. `exp1` and `exp2` parameters take expression data, and each column must contain gene expression. If the expression data does not contain the header information, `label1` and `label2` parameters must be used for this information. `calculateCorr` function calculates the variance of each gene's expression, and genes that vary lesser than the user-defined variance cut-off, `varCutoff`, are excluded from the analysis. The users can select their preferred correlation method, `corrMethod`, with an alternative hypothesis, `alternate` for a given p-value, confidence and minimum correlation cut-off, `pcut`, `conf`, and `corCutoff`, respectively.  
 
 ```{r, coexp, eval=FALSE}
 corAnalysis<-calculateCorr(exp1 = mirna, exp2 = mrna )
@@ -382,6 +380,6 @@ neighbour <- getUCSC(bedfile = regionNC,
 |isTADSearch| TRUE, FALSE. By default it is FALSE|
 |cancer|ACC, BLCA, BRCA, CESC, CHOL, COAD, COADREAD, DLBC, ESCA, GBMLGG, HNSC, KICH, KIPAN, KIRC, KIRP, LGG, LIHC, LUAD, LUSC, OV, PAAD, PCPG, PRAD, READ, SARC,SKCM, STAD, STES, TGCT, THCA, THYM, UCEC, UCS, UVM |
 
-Citation : Olgun G, Nabi A, Tastan O (2019). “NoRCE: Non-coding RNA sets cis enrichment tool.” bioRxiv, 663765. 
+Citation : Olgun G, Nabi A, Tastan O (2019). “NoRCE: Non-coding RNA sets cis enrichment tool.” , BMC Bioinformatics, 22 (1), 1-17, doi: 10.1186/s12859-021-04112-9
 
 @Credits: Gulden Olgun

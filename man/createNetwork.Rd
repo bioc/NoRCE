@@ -24,9 +24,9 @@ createNetwork(
 \item{n}{Number of top enrichments}
 
 \item{isNonCode}{Boolean value that checks whether node of the network is
-GO-term\& coding or GO-term\& noncoding genes. By default, it is FALSE
+GO-term for coding or GO-term for noncoding genes. By default, it is FALSE
 so node of the network is GO-term\& coding gene. Otherwise, nodes are
-GO-term\& noncoding genes.}
+GO-term for noncoding genes.}
 
 \item{takeID}{Boolean value that checks the name decision of the GO/pathway
 node, GO-term/pathway-term or GO ID-pathway ID. If it is true, name of

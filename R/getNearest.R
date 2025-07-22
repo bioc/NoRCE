@@ -67,12 +67,12 @@ assembly <- function(org_assembly = c("hg19",
         "Hsapiens",
         "hg19",
         "hg19",
-        "wgEncodeGencodeV31lift37",
-        3,
-        4,
-        5,
+        "GENCODE V45lift37",
+        1,
         6,
-        13,
+        2,
+        3,
+        18,
         "knownGene",
         "hsapiens_gene_ensembl",
         "Hs.eg.db"
@@ -81,12 +81,12 @@ assembly <- function(org_assembly = c("hg19",
         "Hsapiens",
         "hg38",
         "hg38",
-        "wgEncodeGencodeV31",
-        3,
-        4,
-        5,
+        "GENCODE V48",
+        1,
         6,
-        13,
+        2,
+        3,
+        18,
         "knownGene",
         "hsapiens_gene_ensembl",
         "Hs.eg.db"
@@ -95,7 +95,7 @@ assembly <- function(org_assembly = c("hg19",
         "Mmusculus",
         "mm10",
         "mm10",
-        "wgEncodeGencodeVM22",
+        "All GENCODE VM25",
         3,
         4,
         5,
@@ -109,12 +109,12 @@ assembly <- function(org_assembly = c("hg19",
         "Drerio",
         "danRer10",
         "dre10",
-        "ensGene",
+        "Other RefSeq",
+        3,
         4,
         5,
         6,
-        7,
-        2,
+        13,
         "refGene",
         "drerio_gene_ensembl",
         "Dr.eg.db"
@@ -123,12 +123,12 @@ assembly <- function(org_assembly = c("hg19",
         "Rnorvegicus",
         "rn6",
         "rn6",
-        "ensGene",
+        "Other RefSeq",
+        3,
         4,
         5,
         6,
-        7,
-        2,
+        13,
         "refGene",
         "rnorvegicus_gene_ensembl",
         "Rn.eg.db"
@@ -137,7 +137,7 @@ assembly <- function(org_assembly = c("hg19",
         "Scerevisiae",
         "sacCer3",
         "sc3",
-        "refSeqComposite",
+        "Ensembl Genes",
         3,
         4,
         5,
@@ -151,12 +151,12 @@ assembly <- function(org_assembly = c("hg19",
         "Dmelanogaster",
         "dm6",
         "dm6",
-        "ensGene",
+        "Other RefSeq",
+        3,
         4,
         5,
         6,
-        7,
-        2,
+        13,
         "ensGene",
         "dmelanogaster_gene_ensembl",
         "Dm.eg.db"
@@ -165,12 +165,12 @@ assembly <- function(org_assembly = c("hg19",
         "Celegans",
         "ce11",
         "ce11",
-        "ensGene",
+        "Other RefSeq",
+        3,
         4,
         5,
         6,
-        7,
-        2,
+        13,
         "refGene",
         "celegans_gene_ensembl",
         "Ce.eg.db"
@@ -181,18 +181,9 @@ assembly <- function(org_assembly = c("hg19",
   
   genome(myses) <- types[index, 2]
   
-  if (index == 4 & index == 5 & index == 7 & index == 8) {
-    a <- getTable(ucscTableQuery(myses, track = "ensGene"))
-    a1 <-
-      getTable(ucscTableQuery(myses, track = "ensGene",
-                              table = "ensemblToGeneName"))
-    data <- merge(a1, a)
-    data <- data[, c(4, 5, 6, 7, 2)]
-  }
-  else{
-    data <- getTable(ucscTableQuery(myses, track = types[index, 4]))
-    data <- data[, as.double(types[index, 5:9])]
-  }
+  data <- getTable(ucscTableQuery(myses, track = types[index, 4]))
+  data <- data[, as.double(types[index, 5:9])]
+    
   colnames(data) <- c('chr', 'strand', 'start', 'end', 'symbol')
   ucsc <-
     with(data, GRanges(chr, IRanges::IRanges(start, end), strand, symbol))
@@ -253,7 +244,6 @@ assembly <- function(org_assembly = c("hg19",
 #'
 #' @importFrom GenomicRanges GRanges
 #' @importFrom IRanges subsetByOverlaps
-#' @import zlibbioc
 #'
 #' @examples
 #'  \dontrun{
@@ -567,7 +557,7 @@ convertGeneID <-
                         "mirna",
                         "Ensembl_gene",
                         "Ensembl_trans",
-                        "NCBI"),
+                        "NCBI", 'All'),
            genelist,
            org_assembly = c("hg19",
                             "hg38",
@@ -648,6 +638,9 @@ convertGeneID <-
                     values = genelist,
                     mart = pkg.env$mart
                   ),
+                ifelse(
+                  (genetype == "All"),
+                  output <- convertAllGeneID(genelist = genelist, mart = pkg.env$mart, attributes = attributes),
                 output <-
                   getBM(
                     attributes = c("external_gene_name", attributes),
@@ -661,14 +654,13 @@ convertGeneID <-
         )
       )
     )
-    
+    )
     
     colnames(output) <- c("gene",
                           "chromosome_name",
                           "start_position",
                           "end_position",
                           "strand")
-    
     
     file1 <-
       with(output, GRanges(
@@ -678,9 +670,38 @@ convertGeneID <-
         gene
       ))
     
-    
     return(file1)
   }
+
+convertAllGeneID <- function(genelist,
+                             mart, attributes){
+  dat1 = data.frame()
+  dd = c("entrezgene_id","mirbase_id", "external_gene_name", "ensembl_gene_id", "ensembl_transcript_id", "hgnc_symbol", "mgi_symbol")
+  for (i in 1:length(dd)) {
+    aa = tryCatch(
+      expr = {
+        getBM(
+          attributes = c(dd[i], attributes),
+          filters = dd[i],
+          values = genelist,
+          mart = mart)
+      },
+      error = function(error_message) {
+        return(NULL)
+      }
+    )
+    if (dim(aa)[1] > 0) {
+      colnames(aa) <- c("gene",
+                            "chromosome_name",
+                            "start_position",
+                            "end_position",
+                            "strand")
+      dat1 = rbind(dat1, aa)
+    }
+  }
+  
+  return(unique(dat1))
+}
 
 #' List cell line of the given topological domain regions
 #'
